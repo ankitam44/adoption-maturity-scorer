@@ -1,61 +1,52 @@
 # AI Adoption Maturity Scorer
 
-A Claude-powered assessment tool that scores AI adoption maturity across 8 dimensions and generates department-specific action plans in real time.
+A department-specific AI adoption assessment tool powered by the Claude API.
 
-Built as a work sample demonstrating AI strategy thinking + LLM workflow integration.
+**[→ Live demo](https://adoption-maturity-scorer.vercel.app)**
 
 ## What it does
 
-1. User selects their department (Product, Sales, Support, Marketing, Operations, Finance, Engineering, People & HR)
-2. Answers 8 questions across 6 dimensions: Strategy, Enablement, Measurement, Governance, Workflows, Culture
-3. Gets scored into one of four maturity levels: Reactive → Aware → Scaling → Optimising
-4. Claude API generates a bespoke 3-action plan tailored to their department and exact score profile — streamed live
+8 questions across 6 dimensions (Strategy, Enablement, Measurement, Governance, Workflows, Culture). Select your department, answer the questions, and get a maturity level + three opinionated, department-specific action recommendations generated live by Claude.
 
-## Why the AI part matters
+The scoring is deterministic. The action plan is generative — Claude reasons across your full answer profile and department context to produce advice that hardcoded logic can't replicate.
 
-The recommendations are not hardcoded. Claude receives the department, every individual answer, and the dimension breakdown, then reasons across the full profile to generate advice calibrated to that team's specific situation.
+## Architecture
 
-A Support team scoring low on Governance gets different advice than a Product team with the same overall score. That specificity isn't possible with if/else logic.
+```
+Browser → Vercel serverless function (/api/score) → Anthropic API
+```
 
-## Tech
+- API key stored as a Vercel environment variable — never exposed client-side
+- Streaming response via SSE for live token output
+- No framework — vanilla HTML/CSS/JS
 
-- Vanilla HTML/CSS/JS — no framework, no build step
-- Anthropic Claude API (`claude-sonnet-4-6`) with streaming responses
-- Runs entirely client-side
+## Stack
+
+- Vanilla HTML/CSS/JS
+- Claude API (`claude-sonnet-4-6`) with streaming
+- Vercel serverless functions (Node.js)
 
 ## Run locally
 
 ```bash
-# Clone the repo
-git clone https://github.com/ankitam44/adoption-maturity-scorer.git
-cd adoption-maturity-scorer
-
-# Serve locally (any static server works)
-npx serve .
-# or
-python3 -m http.server 8080
+npm i -g vercel
+vercel dev
 ```
 
-Open `http://localhost:8080` in your browser.
+Set `ANTHROPIC_API_KEY` in a `.env.local` file:
 
-> **Note:** The Claude API call is handled by the claude.ai environment when run there. For standalone use, you'll need to add your Anthropic API key to the fetch headers.
+```
+ANTHROPIC_API_KEY=sk-ant-...
+```
 
-## Dimensions scored
+## Deploy
 
-| Dimension | What it measures |
-|-----------|-----------------|
-| Strategy | Ownership, roadmap clarity, leadership mandate |
-| Enablement | Team confidence, training, prompt libraries |
-| Measurement | KPIs, outcome tracking, impact frameworks |
-| Governance | Data policies, approved tools, shadow AI risk |
-| Workflows | AI integration depth in core processes |
-| Culture | Leadership behaviour, organisational priority |
+```bash
+vercel --prod
+```
 
-## Maturity levels
+Add `ANTHROPIC_API_KEY` in Vercel project settings → Environment Variables.
 
-| Level | Score | Meaning |
-|-------|-------|---------|
-| Reactive | 8–14 | Scattered, uncoordinated, compliance risk |
-| Aware | 15–22 | Intent exists, execution is fragmented |
-| Scaling | 23–28 | Real momentum, quality decay risk |
-| Optimising | 29–32 | Ahead of market, compounding advantage |
+---
+
+Built by [Ankita Menon](https://linkedin.com/in/ankitabmenon)
