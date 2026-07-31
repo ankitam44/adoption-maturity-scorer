@@ -5,135 +5,416 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Adoption Maturity Scorer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #ffffff;
-      --surface: #f5f5f4;
-      --border: #e5e5e3;
-      --border-strong: #d4d4d2;
-      --text-primary: #1a1a18;
-      --text-secondary: #6b6b68;
-      --text-muted: #9d9d9a;
-      --accent: #2563eb;
-      --accent-bg: #eff6ff;
-      --accent-border: #bfdbfe;
-      --accent-text: #1d4ed8;
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface-2: #1a1a1a;
+      --border: #2a2a2a;
+      --border-strong: #3a3a3a;
+      --text: #f0f0f0;
+      --text-secondary: #888;
+      --text-muted: #555;
+      --accent: #4f8ef7;
+      --accent-bg: #0f1e3d;
+      --accent-border: #1e3a6e;
+      --success-bg: #0a2416;
+      --success-border: #1a4a2e;
+      --success-text: #4ade80;
+      --warning-bg: #2a1a00;
+      --warning-text: #fbbf24;
       --radius: 8px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #111110;
-        --surface: #1c1c1a;
-        --border: #2a2a28;
-        --border-strong: #3a3a38;
-        --text-primary: #f5f5f3;
-        --text-secondary: #a8a8a5;
-        --text-muted: #6b6b68;
-        --accent: #3b82f6;
-        --accent-bg: #172554;
-        --accent-border: #1e40af;
-        --accent-text: #93c5fd;
-      }
-    }
-
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: 'Inter', sans-serif;
       background: var(--bg);
-      color: var(--text-primary);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 3rem 1.5rem;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
     }
 
-    .container { width: 100%; max-width: 560px; }
+    header {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 0.5px solid var(--border);
+    }
 
-    .progress-bar { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 2.5rem; }
-    .progress-fill { height: 3px; border-radius: 2px; background: var(--accent); transition: width 0.4s ease; }
+    .logo {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
 
-    .q-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; }
-    .q-text { font-size: 18px; font-weight: 500; color: var(--text-primary); margin-bottom: 1.5rem; line-height: 1.4; }
+    .logo span { color: var(--accent); }
+
+    .built-by {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .built-by a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .built-by a:hover { color: var(--text); }
+
+    main { width: 100%; max-width: 680px; }
+
+    .progress-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      margin-bottom: 2.5rem;
+    }
+
+    .progress-fill {
+      height: 2px;
+      background: var(--accent);
+      border-radius: 1px;
+      transition: width 0.4s ease;
+    }
+
+    .step-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .intro-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      line-height: 1.25;
+    }
+
+    .intro-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 2.5rem;
+      max-width: 520px;
+    }
+
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .dept-btn {
+      padding: 1rem 0.75rem;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .dept-btn:hover {
+      border-color: var(--accent-border);
+      background: var(--accent-bg);
+      color: var(--accent);
+    }
+
+    .dept-btn.selected {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .dept-icon {
+      font-size: 22px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .q-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      line-height: 1.45;
+    }
 
     .option-btn {
-      display: block; width: 100%; text-align: left;
-      padding: 0.75rem 1rem; margin-bottom: 0.5rem;
-      background: var(--surface); border: 0.5px solid var(--border);
-      border-radius: var(--radius); font-size: 14px; font-family: inherit;
-      color: var(--text-primary); cursor: pointer;
-      transition: border-color 0.15s, background 0.15s; line-height: 1.4;
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.85rem 1.1rem;
+      margin-bottom: 8px;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      line-height: 1.45;
     }
-    .option-btn:hover { border-color: var(--accent-border); background: var(--accent-bg); color: var(--accent-text); }
-    .option-btn.selected { border-color: var(--accent); background: var(--accent-bg); color: var(--accent-text); }
 
-    .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
-    .nav-btn {
-      padding: 0.5rem 1.25rem; border: 0.5px solid var(--border-strong);
-      border-radius: var(--radius); background: transparent; color: var(--text-primary);
-      font-size: 14px; font-family: inherit; cursor: pointer;
+    .option-btn:hover {
+      border-color: var(--accent-border);
+      background: var(--accent-bg);
+      color: var(--accent);
     }
-    .nav-btn:hover { background: var(--surface); }
-    .nav-btn.primary { background: var(--text-primary); color: var(--bg); border-color: var(--text-primary); }
-    .nav-btn.primary:hover { opacity: 0.85; }
-    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .option-btn.selected {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+      color: var(--accent);
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.75rem;
+    }
+
+    .nav-btn {
+      padding: 0.55rem 1.25rem;
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-btn:hover { background: var(--surface-2); color: var(--text); }
+
+    .nav-btn.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 500;
+    }
+
+    .nav-btn.primary:hover { opacity: 0.88; }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
 
     .score-counter { font-size: 13px; color: var(--text-muted); }
 
-    .dept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 1.5rem; }
-    .dept-btn {
-      padding: 0.9rem 0.75rem; background: var(--surface);
-      border: 0.5px solid var(--border); border-radius: var(--radius);
-      font-size: 13px; font-family: inherit; color: var(--text-primary);
-      cursor: pointer; text-align: center; transition: all 0.15s;
+    .level-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 1.25rem;
     }
-    .dept-btn:hover { border-color: var(--accent-border); background: var(--accent-bg); color: var(--accent-text); }
-    .dept-btn.selected { border-color: var(--accent); background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
-    .dept-icon { font-size: 20px; display: block; margin-bottom: 6px; }
 
-    .intro-title { font-size: 22px; font-weight: 500; color: var(--text-primary); margin-bottom: 0.5rem; }
-    .intro-sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6; }
+    .result-title {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
 
-    .level-badge { display: inline-block; padding: 4px 12px; border-radius: var(--radius); font-size: 12px; font-weight: 500; margin-bottom: 1rem; }
-    .level-label { font-size: 24px; font-weight: 500; color: var(--text-primary); margin-bottom: 0.25rem; }
-    .score-bar { height: 5px; background: var(--border); border-radius: 3px; margin-bottom: 1.5rem; }
-    .score-bar-fill { height: 5px; border-radius: 3px; background: var(--accent); transition: width 0.7s ease; }
+    .result-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
 
-    .dimension-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
-    .dim-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 0.6rem 0.75rem; }
-    .dim-name { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
-    .dim-row { display: flex; align-items: center; gap: 8px; }
-    .dim-bar-bg { flex: 1; height: 3px; background: var(--border); border-radius: 2px; }
-    .dim-bar-fill { height: 3px; border-radius: 2px; background: var(--accent); }
-    .dim-score { font-size: 12px; font-weight: 500; color: var(--text-primary); min-width: 30px; text-align: right; }
+    .score-track {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 2rem;
+    }
 
-    .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.5rem 0; }
-    .section-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.75rem; }
+    .score-fill {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--accent);
+      transition: width 0.8s ease;
+    }
 
-    .ai-output { font-size: 14px; color: var(--text-primary); line-height: 1.8; white-space: pre-wrap; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
 
-    .loading-state { padding: 2.5rem 0; text-align: center; }
-    .loading-text { font-size: 14px; color: var(--text-secondary); margin-top: 1rem; }
-    .spinner { width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto; }
+    .dim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .dim-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 0.9rem;
+    }
+
+    .dim-name {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .dim-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dim-track {
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+    }
+
+    .dim-fill {
+      height: 2px;
+      border-radius: 1px;
+      background: var(--accent);
+    }
+
+    .dim-pct {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      min-width: 30px;
+      text-align: right;
+    }
+
+    .divider {
+      border: none;
+      border-top: 0.5px solid var(--border);
+      margin: 1.75rem 0;
+    }
+
+    .ai-output {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    .ai-output strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .loading-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 1rem 0;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--border-strong);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .stream-cursor { display: inline-block; width: 2px; height: 14px; background: var(--accent); margin-left: 2px; vertical-align: middle; animation: blink 0.9s step-end infinite; }
+    .loading-text { font-size: 14px; color: var(--text-muted); }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 13px;
+      background: var(--accent);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 0.9s step-end infinite;
+    }
+
     @keyframes blink { 50% { opacity: 0; } }
 
-    .error-box { background: #fef2f2; border: 0.5px solid #fecaca; border-radius: var(--radius); padding: 1rem; font-size: 14px; color: #991b1b; margin-top: 1rem; }
-    @media (prefers-color-scheme: dark) { .error-box { background: #2d1515; border-color: #7f1d1d; color: #fca5a5; } }
+    .error-box {
+      background: #1a0a0a;
+      border: 0.5px solid #3d1515;
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      font-size: 14px;
+      color: #f87171;
+      line-height: 1.5;
+    }
 
-    .restart-row { text-align: center; margin-top: 2rem; }
+    .restart-row {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 0.5px solid var(--border);
+    }
+
+    footer {
+      margin-top: 4rem;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: var(--text-secondary); }
+
+    @media (max-width: 520px) {
+      .intro-title { font-size: 22px; }
+      .dept-grid { grid-template-columns: repeat(2, 1fr); }
+      .dim-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-<div class="container">
-  <div id="app"></div>
-</div>
+
+<header>
+  <div class="logo">AI Adoption <span>Scorer</span></div>
+  <div class="built-by">Built by <a href="https://linkedin.com/in/ankitabmenon" target="_blank">Ankita Menon</a></div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  Powered by Claude · <a href="https://github.com/ankitam44/adoption-maturity-scorer" target="_blank">View on GitHub</a>
+</footer>
 
 <script>
 const departments = [
@@ -190,7 +471,7 @@ const questions = [
     { text: "Integrated in a few workflows with measurable impact", score: 3 },
     { text: "AI is part of multiple critical workflows with defined ROI", score: 4 }
   ]},
-  { id: "q8", dim: "Culture", text: "How does your team leadership talk about AI?", options: [
+  { id: "q8", dim: "Culture", text: "How does your leadership talk about AI?", options: [
     { text: "Rarely or never — it's not seen as a priority", score: 1 },
     { text: "Occasional mentions but no consistent message or investment", score: 2 },
     { text: "Leadership supports AI in principle but doesn't actively drive it", score: 3 },
@@ -199,15 +480,18 @@ const questions = [
 ];
 
 const levels = [
-  { name: "Reactive", range: [8, 14], badge: { bg: "#F09595", text: "#501313" } },
-  { name: "Aware", range: [15, 22], badge: { bg: "#FAC775", text: "#412402" } },
-  { name: "Scaling", range: [23, 28], badge: { bg: "#9FE1CB", text: "#04342C" } },
-  { name: "Optimising", range: [29, 32], badge: { bg: "#B5D4F4", text: "#042C53" } }
+  { name: "Reactive",    range: [8, 14],  badge: { bg: "#3d1515", text: "#f87171" } },
+  { name: "Aware",       range: [15, 22], badge: { bg: "#2a1a00", text: "#fbbf24" } },
+  { name: "Scaling",     range: [23, 28], badge: { bg: "#0a2416", text: "#4ade80" } },
+  { name: "Optimising",  range: [29, 32], badge: { bg: "#0f1e3d", text: "#4f8ef7" } }
 ];
 
 const dims = ["Strategy", "Enablement", "Measurement", "Governance", "Workflows", "Culture"];
 
-let step = "dept", selectedDept = null, currentQ = 0, answers = {};
+let step = "dept";
+let selectedDept = null;
+let currentQ = 0;
+let answers = {};
 
 function getLevel(total) {
   return levels.find(l => total >= l.range[0] && total <= l.range[1]) || levels[levels.length - 1];
@@ -225,65 +509,27 @@ function getDimScores() {
 
 function buildAnswerSummary() {
   return questions.map(q => {
-    const selected = q.options.find(o => o.score === answers[q.id]);
-    return `${q.dim} — ${q.text}\nAnswer: ${selected ? selected.text : 'N/A'} (score: ${answers[q.id] || 0}/4)`;
+    const sel = q.options.find(o => o.score === answers[q.id]);
+    return `${q.dim} — ${q.text}\nAnswer: ${sel ? sel.text : 'N/A'} (${answers[q.id] || 0}/4)`;
   }).join('\n\n');
 }
 
-async function fetchAIRecommendations(dept, total, level, dimScores) {
-  const deptLabel = departments.find(d => d.id === dept)?.label || dept;
-  const answerSummary = buildAnswerSummary();
-  const dimSummary = dims.map(d => `${d}: ${Math.round((dimScores[d].total / dimScores[d].max) * 100)}%`).join(', ');
-
-  const prompt = `You are an expert in enterprise AI adoption strategy, specifically for B2B SaaS and e-mobility scale-ups.
-
-A ${deptLabel} team has completed an AI Adoption Maturity Assessment. Here are their results:
-
-Overall maturity level: ${level.name} (${total}/32)
-Dimension scores: ${dimSummary}
-
-Detailed answers:
-${answerSummary}
-
-Generate THREE highly specific, opinionated action recommendations tailored for a ${deptLabel} team at this exact maturity level.
-
-Rules:
-- Each action must be specific to ${deptLabel} team workflows and daily realities — not generic AI advice
-- Reference actual ${deptLabel} use cases (e.g. for Support: ticket triage, CSAT, response time; for Product: spec writing, user research synthesis; for Sales: pipeline intelligence, outreach personalisation)
-- Be direct and concrete — name the specific workflow, tool type, or process to change
-- If their weakest dimension is obvious from the scores, address it
-- Write in a direct, professional tone — no hype, no filler
-- Format as three numbered actions, each with a bold header line followed by 2 sentences of specific guidance
-- Keep the total response under 250 words`;
-
-  const response = await fetch("/api/score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1000,
-      stream: true,
-      messages: [{ role: "user", content: prompt }]
-    })
-  });
-
-  if (!response.ok) throw new Error(`API error ${response.status}`);
-  return response;
+function render(html) {
+  document.getElementById('app').innerHTML = html;
 }
 
-function render(html) { document.getElementById('app').innerHTML = html; }
-
-function renderDeptSelect() {
+function renderDept() {
   render(`
-    <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
-    <div class="intro-title">AI adoption maturity scorer</div>
-    <div class="intro-sub">Answer 8 questions and get a department-specific action plan — generated live by Claude based on your exact profile.</div>
-    <div class="q-label">Select your department</div>
+    <div class="step-label">AI Adoption Maturity Scorer</div>
+    <h1 class="intro-title">How mature is your team's AI adoption?</h1>
+    <p class="intro-sub">8 questions. 2 minutes. A department-specific action plan generated by Claude — not templated advice.</p>
+    <div class="section-label">Select your department</div>
     <div class="dept-grid">
       ${departments.map(d => `
         <button class="dept-btn${selectedDept === d.id ? ' selected' : ''}" data-id="${d.id}">
           <span class="dept-icon">${d.icon}</span>${d.label}
-        </button>`).join('')}
+        </button>
+      `).join('')}
     </div>
     <div style="text-align:right;">
       <button class="nav-btn primary" id="start-btn" ${!selectedDept ? 'disabled' : ''}>Start assessment →</button>
@@ -312,19 +558,20 @@ function renderQuestion() {
 
   render(`
     <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-    <div class="q-label">Question ${currentQ + 1} of ${questions.length} · ${q.dim} · ${deptLabel}</div>
+    <div class="step-label">Question ${currentQ + 1} of ${questions.length} · ${q.dim} · ${deptLabel}</div>
     <div class="q-text">${q.text}</div>
     <div id="options">
       ${q.options.map(o => `
         <button class="option-btn${answers[q.id] === o.score ? ' selected' : ''}" data-score="${o.score}">
           ${o.text}
-        </button>`).join('')}
+        </button>
+      `).join('')}
     </div>
     <div class="nav-row">
       <button class="nav-btn" id="back-btn">← Back</button>
       <span class="score-counter">${Object.keys(answers).length} of 8 answered</span>
       <button class="nav-btn primary" id="next-btn" ${answers[q.id] === undefined ? 'disabled' : ''}>
-        ${currentQ === questions.length - 1 ? 'Get my plan ↗' : 'Next →'}
+        ${currentQ === questions.length - 1 ? 'Get my plan →' : 'Next →'}
       </button>
     </div>
   `);
@@ -341,7 +588,7 @@ function renderQuestion() {
 
   document.getElementById('back-btn').addEventListener('click', () => {
     if (currentQ > 0) { currentQ--; renderQuestion(); }
-    else { step = "dept"; renderDeptSelect(); }
+    else { step = "dept"; renderDept(); }
   });
 
   document.getElementById('next-btn').addEventListener('click', () => {
@@ -360,89 +607,102 @@ async function renderResult() {
   const dimRows = dims.map(d => {
     const s = dimScores[d];
     const dpct = s.max > 0 ? Math.round((s.total / s.max) * 100) : 0;
-    return `<div class="dim-card">
-      <div class="dim-name">${d}</div>
-      <div class="dim-row">
-        <div class="dim-bar-bg"><div class="dim-bar-fill" style="width:${dpct}%"></div></div>
-        <span class="dim-score">${dpct}%</span>
-      </div>
-    </div>`;
+    return `
+      <div class="dim-card">
+        <div class="dim-name">${d}</div>
+        <div class="dim-row">
+          <div class="dim-track"><div class="dim-fill" style="width:${dpct}%"></div></div>
+          <span class="dim-pct">${dpct}%</span>
+        </div>
+      </div>`;
   }).join('');
 
   render(`
     <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
     <span class="level-badge" style="background:${level.badge.bg};color:${level.badge.text};">${level.name} · ${deptLabel}</span>
-    <div class="level-label">${total}/32</div>
-    <div class="score-bar"><div class="score-bar-fill" style="width:${pct}%"></div></div>
+    <div class="result-title">${total} / 32</div>
+    <div class="result-sub">Overall maturity score</div>
+    <div class="score-track"><div class="score-fill" style="width:${pct}%"></div></div>
     <div class="section-label">Dimension breakdown</div>
-    <div class="dimension-grid">${dimRows}</div>
-    <div class="divider"></div>
+    <div class="dim-grid">${dimRows}</div>
+    <hr class="divider" />
     <div class="section-label">Your three next moves — tailored for ${deptLabel}</div>
     <div id="ai-output">
-      <div class="loading-state">
+      <div class="loading-wrap">
         <div class="spinner"></div>
-        <div class="loading-text">Claude is analysing your ${deptLabel} team's profile...</div>
+        <span class="loading-text">Claude is analysing your ${deptLabel} team's profile...</span>
       </div>
     </div>
     <div class="restart-row" id="restart-row" style="display:none;">
-      <button class="nav-btn" id="restart-btn">Start over</button>
+      <button class="nav-btn" id="restart-btn">← Start over</button>
     </div>
   `);
 
+  const deptId = selectedDept;
+  const answerSummary = buildAnswerSummary();
+  const dimSummary = dims.map(d => {
+    const s = dimScores[d];
+    return `${d}: ${Math.round((s.total / s.max) * 100)}%`;
+  }).join(', ');
+
+  const prompt = `You are an expert in enterprise AI adoption strategy, specifically for B2B SaaS and e-mobility scale-ups.
+
+A ${deptLabel} team has completed an AI Adoption Maturity Assessment. Here are their results:
+
+Overall maturity level: ${level.name} (${total}/32)
+Dimension scores: ${dimSummary}
+
+Detailed answers:
+${answerSummary}
+
+Generate THREE highly specific, opinionated action recommendations tailored for a ${deptLabel} team at this exact maturity level.
+
+Rules:
+- Each action must be specific to ${deptLabel} team workflows and daily realities — not generic AI advice
+- Reference actual ${deptLabel} use cases (e.g. for Support: ticket triage, CSAT, response time; for Product: spec writing, user research synthesis; for Sales: pipeline intelligence, outreach personalisation; for Marketing: content workflows, campaign briefs; for Operations: process documentation, workflow automation; for Finance: reporting, anomaly detection; for Engineering: code review, documentation; for People & HR: job description writing, onboarding, policy Q&A)
+- Be direct and concrete — name the specific workflow, tool type, or process to change
+- Address their weakest dimension explicitly if it stands out
+- Write in a direct, professional tone — no hype, no filler
+- Format as three numbered actions. Each action: one bold header line (the action itself), then 2 sentences of specific, concrete guidance on a new line
+- Keep total response under 280 words`;
+
   try {
-    const response = await fetchAIRecommendations(selectedDept, total, level, dimScores);
-    const outputEl = document.getElementById('ai-output');
-    outputEl.innerHTML = '<div class="ai-output" id="stream-text"></div>';
-    const streamEl = document.getElementById('stream-text');
-    const cursor = document.createElement('span');
-    cursor.className = 'stream-cursor';
-    streamEl.appendChild(cursor);
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '', fullText = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if (data === '[DONE]') continue;
-        try {
-          const parsed = JSON.parse(data);
-          if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
-            fullText += parsed.delta.text;
-            streamEl.textContent = fullText;
-            streamEl.appendChild(cursor);
-          }
-        } catch {}
-      }
-    }
-
-    cursor.remove();
-    streamEl.textContent = fullText;
-    document.getElementById('restart-row').style.display = 'block';
-    document.getElementById('restart-btn').addEventListener('click', () => {
-      step = "dept"; selectedDept = null; currentQ = 0; answers = {};
-      renderDeptSelect();
+    const response = await fetch("/api/score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
     });
+
+    if (!response.ok) throw new Error(`API error ${response.status}`);
+
+    const data = await response.json();
+    const fullText = data.content?.[0]?.text || "No response received.";
+
+    const outputEl = document.getElementById('ai-output');
+    outputEl.innerHTML = `<div class="ai-output">${fullText
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>')}</div>`;
 
   } catch (err) {
     document.getElementById('ai-output').innerHTML = `
-      <div class="error-box"><strong>Couldn't connect to Claude API.</strong> Make sure you're running this in an environment where the Anthropic API is accessible. Error: ${err.message}</div>`;
-    document.getElementById('restart-row').style.display = 'block';
-    document.getElementById('restart-btn').addEventListener('click', () => {
-      step = "dept"; selectedDept = null; currentQ = 0; answers = {};
-      renderDeptSelect();
-    });
+      <div class="error-box">
+        <strong>Couldn't connect to Claude.</strong><br>
+        ${err.message}
+      </div>`;
   }
+
+  document.getElementById('restart-row').style.display = 'block';
+  document.getElementById('restart-btn').addEventListener('click', () => {
+    step = "dept"; selectedDept = null; currentQ = 0; answers = {};
+    renderDept();
+  });
 }
 
-renderDeptSelect();
+renderDept();
 </script>
 </body>
 </html>
